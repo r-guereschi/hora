@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Calculadora de Horário de Saída</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				padding: 20px;
+				background: #f9f9f9;
+			}
+			label,
+			input {
+				display: block;
+				margin-bottom: 10px;
+			}
+			input[type="time"],
+			input[type="number"] {
+				padding: 5px;
+				font-size: 1em;
+			}
+			button {
+				margin-top: 10px;
+				padding: 10px 15px;
+				font-size: 1em;
+			}
+			#resultado {
+				margin-top: 20px;
+				font-weight: bold;
+				font-size: 1.2em;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Calculadora de Horário de Saída</h1>
+
+		<label for="horarioLargada">Horário da largada:</label>
+		<input type="time" id="horarioLargada" required />
+
+		<label for="tempoAntes">Minutos antes da largada para chegar:</label>
+		<input type="number" id="tempoAntes" min="0" required />
+
+		<label for="tempoViagem">Tempo de viagem até o local (minutos):</label>
+		<input type="number" id="tempoViagem" min="0" required />
+
+		<button onclick="calcularHorarioSaida()">Calcular horário de saída</button>
+
+		<div id="resultado"></div>
+
+		<script>
+			function calcularHorarioSaida() {
+				const horarioLargada = document.getElementById("horarioLargada").value;
+				const tempoAntes = parseInt(
+					document.getElementById("tempoAntes").value,
+					10
+				);
+				const tempoViagem = parseInt(
+					document.getElementById("tempoViagem").value,
+					10
+				);
+
+				if (!horarioLargada || isNaN(tempoAntes) || isNaN(tempoViagem)) {
+					document.getElementById("resultado").innerText =
+						"Por favor, preencha todos os campos corretamente.";
+					return;
+				}
+
+				// Converte horário da largada para objeto Date
+				const [horas, minutos] = horarioLargada.split(":").map(Number);
+				const dataLargada = new Date();
+				dataLargada.setHours(horas);
+				dataLargada.setMinutes(minutos);
+				dataLargada.setSeconds(0);
+				dataLargada.setMilliseconds(0);
+
+				// Subtrai tempoAntes e tempoViagem (total em minutos)
+				const totalMinutosAntes = tempoAntes + tempoViagem;
+				dataLargada.setMinutes(dataLargada.getMinutes() - totalMinutosAntes);
+
+				// Formata horário de saída
+				const hora = dataLargada.getHours().toString().padStart(2, "0");
+				const min = dataLargada.getMinutes().toString().padStart(2, "0");
+
+				document.getElementById(
+					"resultado"
+				).innerText = `Você deve sair de casa às ${hora}:${min}`;
+			}
+		</script>
+	</body>
+</html>
